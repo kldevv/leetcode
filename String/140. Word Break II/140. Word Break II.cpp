@@ -1,6 +1,6 @@
 /*
 Number: 140
-Topic: Word Break II 
+Topic: Word Break II
 Date: 2021/10/1
 Rate: Hard
 https://leetcode.com/problems/word-break-ii/
@@ -18,9 +18,8 @@ Constraints:
 */
 
 class Solution {
-private:
-
-public:
+   private:
+   public:
     vector<string> wordBreak(string s, vector<string>& wordDict) {
         unordered_set<string> wordSet(wordDict.begin(), wordDict.end());
         unordered_map<string, vector<string>> dp;

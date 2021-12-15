@@ -19,12 +19,12 @@ Constraints:
 */
 
 class Solution {
-public:
+   public:
     int superEggDrop(int k, int n) {
-        vector<vector<int>> dp(k+1, vector<int>(n+1, INT_MAX));
+        vector<vector<int>> dp(k + 1, vector<int>(n + 1, INT_MAX));
 
-        for (int K = 1; K <= k; K++) {
-            for (int N = 0; N <= n; N++) {
+        for (int N = 0; N <= n; N++) {
+            for (int K = 1; K <= k; K++) {
                 if (K == 1) {
                     dp[K][N] = N;
                     continue;
@@ -34,7 +34,7 @@ public:
                     continue;
                 }
                 for (int X = 1; X <= N; X++) {
-                    dp[K][N] = min(dp[K][N], 1 + max(dp[K-1][X-1], dp[K][N-X]));
+                    dp[K][N] = min(dp[K][N], 1 + max(dp[K - 1][X - 1], dp[K][N - X]));
                 }
             }
         }

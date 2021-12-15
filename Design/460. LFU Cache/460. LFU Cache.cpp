@@ -1,7 +1,7 @@
 /*
 Number: 460
 Topic: LFU Cache
-Date: 2021/9/15
+Date: 2021/11/29
 Rate: Hard
 https://leetcode.com/problems/lfu-cache/
 
@@ -25,58 +25,108 @@ Constraints:
     * 0 <= value <= 109
     * At most 2 * 105 calls will be made to get and put.
 */
+#include <algorithm>
+#include <iostream>
+#include <list>
+#include <unordered_map>
+#include <vector>
+
+using namespace std;
 
 class LFUCache {
+   private:
+    int _minFrequency;
+    int _capacity;
+    int _size;
+    unordered_map<int, list<int>> _caches;
+    unordered_map<int, tuple<int, int, list<int>::iterator>> _dict;
 
-private:
-    unordered_map<int, list<int>> dequeByFreq;
-    unordered_map<int, list<int>::iterator> iterUmap;
-    unordered_map<int, pair<int, int>> nodeUmap; // key, freq
-    int capacity;
-    int size;
-    int minFreq;
-public:
+    void promote(int key) {
+        tuple<int, int, list<int>::iterator> targetTuple = _dict[key];
+        int value = std::get<0>(targetTuple);
+        int freq = std::get<1>(targetTuple);
+        list<int>::iterator pointer = std::get<2>(targetTuple);
+
+        // delete origin
+        _caches[freq].erase(pointer);
+
+        // put it to frequency + 1, push front
+        _caches[freq + 1].push_front(key);
+        // update minFreq
+        if (_caches[_minFrequency].empty())
+            _minFrequency += 1;
+        // update dict
+        _dict[key] = make_tuple(value, freq + 1, _caches[freq + 1].begin());
+    }
+
+   public:
     LFUCache(int capacity) {
-        this->capacity = capacity;
-        this->size = 0;
+        /*
+        Actions:
+            - get:
+                - check if the key present
+                    - promote the key
+                        - promote frequency
+                        - promote recency
+                    - return value
+                - throw exception
+
+            - put:
+                - check if the key present
+                    - update the value
+                    - promote the key
+                        - promote frequency
+                        - promote recency
+                - evict excess
+                    - get minFrequency cache, pop back
+                - add new value
+                    - put it to frequency == 1 cache, push front
+
+            - promote:
+                - delete the origin element
+                - put it to frequency + 1, push front
+
+        Data Strcuture:
+            - map (int freq : list cache)
+                - list cache(key) : most recent in the head, least in the tail
+            - map (int key : {int value, int freq, iterator node})
+        */
+        _capacity = capacity;
+        _size = 0;
+        _minFrequency = 0;
     }
-    
+
     int get(int key) {
-        if (nodeUmap.count(key) == 0)
+        if (_dict.count(key) == 0)
             return -1;
-
-        dequeByFreq[nodeUmap[key].second].erase(iterUmap[key]);
-        nodeUmap[key].second += 1;
-        dequeByFreq[nodeUmap[key].second].push_back(key);
-        iterUmap[key] = prev(dequeByFreq[nodeUmap[key].second].end());
-
-        if (dequeByFreq[minFreq].empty())
-            minFreq += 1;
-
-        return nodeUmap[key].first;
+        promote(key);
+        return std::get<0>(_dict[key]);
     }
-    
+
     void put(int key, int value) {
-        if (capacity <= 0)
+        if (_capacity == 0)
             return;
 
-        if (this->get(key) != -1) {
-            nodeUmap[key].first = value;
-            return;
+        // update the key
+        if (_dict.count(key) == 1) {
+            promote(key);
+            auto targetTuple = _dict[key];
+            _dict[key] = make_tuple(value, std::get<1>(targetTuple), std::get<2>(targetTuple));
         }
 
-        if (size >= capacity) {
-            nodeUmap.erase(dequeByFreq[minFreq].front());
-            iterUmap.erase(dequeByFreq[minFreq].front());
-            dequeByFreq[minFreq].pop_front();
-            size -= 1;
+        // add new element
+        else {
+            // evict excess
+            if (_size == _capacity) {
+                _dict.erase(_caches[_minFrequency].back());
+                _caches[_minFrequency].pop_back();
+                _size -= 1;
+            }
+            _caches[1].push_front(key);
+            _dict[key] = make_tuple(value, 1, _caches[1].begin());
+            _size += 1;
+            _minFrequency = 1;
         }
-
-        nodeUmap[key] = {value, 1};
-        dequeByFreq[1].push_back(key);
-        iterUmap[key] = prev(dequeByFreq[1].end());
-        minFreq = 1;
-        size += 1;
     }
 };
 

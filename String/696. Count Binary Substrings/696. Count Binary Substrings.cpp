@@ -15,14 +15,14 @@ Constraints:
 */
 
 class Solution {
-public:
+   public:
     int countBinarySubstrings(string s) {
         int result = 0;
         int curCount = 1;
         int prevCount = 0;
 
         for (int i = 1; i < s.size(); i++) {
-            if (s[i-1] == s[i]) {
+            if (s[i - 1] == s[i]) {
                 curCount += 1;
             } else {
                 result += min(curCount, prevCount);

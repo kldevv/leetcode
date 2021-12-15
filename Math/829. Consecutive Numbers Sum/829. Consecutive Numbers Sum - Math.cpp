@@ -41,8 +41,8 @@ class Solution {
 
             (n - k*(1+k)/2) % k == 0
                 >> Validity check
-        
-    
+
+
 
         */
 

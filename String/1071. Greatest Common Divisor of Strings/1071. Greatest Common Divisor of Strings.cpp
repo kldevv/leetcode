@@ -23,7 +23,7 @@ using namespace std;
 class Solution {
    private:
     int gcd(int A, int B) {
-        return (A == 0) ? B : gcd(A % B, A);
+        return (A == 0) ? B : gcd(B % A, A);
     }
 
    public:

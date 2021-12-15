@@ -15,6 +15,7 @@ Constraints:
 # right <= n
 # left >= right
 
+
 class Solution:
     def __init__(self):
         self.results = list()
@@ -32,7 +33,3 @@ class Solution:
 
         generate("", n, 0)
         return self.results
-
-
-
-
