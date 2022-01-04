@@ -81,7 +81,7 @@ class Solution {
 
                 if (!found) {
                     for (int skipIdx = 0; skipIdx < toValid.size(); skipIdx++) {
-                        if ((toValid[skipIdx] == '(' || toValid[skipIdx] == ')') && (skipIdx == toValid.size() - 1 || toValid[skipIdx + 1] != toValid[skipIdx])) {
+                        if (toValid[skipIdx] == '(' || toValid[skipIdx] == ')') {
                             string truncated = toValid.substr(0, skipIdx) + toValid.substr(skipIdx + 1);
                             if (seen.count(truncated) == 0) {
                                 seen.insert(truncated);

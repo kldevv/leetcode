@@ -1,0 +1,9 @@
+Name: 340. Longest Substring with At Most K Distinct Characters
+Difficulty: Medium
+URL: https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/
+Description: 
+  - Given a string s and an integer k, return the length of the longest substring of s that contains at most k distinct characters.
+Constraints:
+  - 1 <= s.length <= 5 * 104
+  - 0 <= k <= 50
+FollowUp:
